@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import './App.css';
 
+const API_URL = 'https://todoproject-h31f.onrender.com';
+
 function App() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -19,8 +21,7 @@ function App() {
   // =========================
 
   const refreshAccessToken = async () => {
-    const refreshToken =
-      localStorage.getItem('refresh_token');
+    const refreshToken = localStorage.getItem('refresh_token');
 
     if (!refreshToken) {
       return null;
@@ -28,7 +29,7 @@ function App() {
 
     try {
       const response = await fetch(
-        '/api/token/refresh/',
+        `${API_URL}/api/token/refresh/`,
         {
           method: 'POST',
           headers: {
@@ -45,14 +46,10 @@ function App() {
       if (!response.ok) {
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
-
         return null;
       }
 
-      localStorage.setItem(
-        'access_token',
-        data.access
-      );
+      localStorage.setItem('access_token', data.access);
 
       return data.access;
     } catch {
@@ -64,12 +61,8 @@ function App() {
   // AUTHENTICATED REQUEST
   // =========================
 
-  const authenticatedFetch = async (
-    url,
-    options = {}
-  ) => {
-    let token =
-      localStorage.getItem('access_token');
+  const authenticatedFetch = async (url, options = {}) => {
+    let token = localStorage.getItem('access_token');
 
     let response = await fetch(url, {
       ...options,
@@ -112,16 +105,19 @@ function App() {
     setError('');
 
     try {
-      const response = await fetch('/api/token/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username,
-          password,
-        }),
-      });
+      const response = await fetch(
+        `${API_URL}/api/token/`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            username,
+            password,
+          }),
+        }
+      );
 
       const data = await response.json();
 
@@ -156,7 +152,7 @@ function App() {
   const getTasks = async () => {
     try {
       const response = await authenticatedFetch(
-        '/api/tasks/'
+        `${API_URL}/api/tasks/`
       );
 
       if (!response.ok) {
@@ -186,7 +182,7 @@ function App() {
 
     try {
       const response = await authenticatedFetch(
-        '/api/tasks/',
+        `${API_URL}/api/tasks/`,
         {
           method: 'POST',
           headers: {
@@ -225,7 +221,7 @@ function App() {
   const toggleTask = async (task) => {
     try {
       const response = await authenticatedFetch(
-        `/api/tasks/${task.id}/`,
+        `${API_URL}/api/tasks/${task.id}/`,
         {
           method: 'PATCH',
           headers: {
@@ -282,7 +278,7 @@ function App() {
 
     try {
       const response = await authenticatedFetch(
-        `/api/tasks/${taskId}/`,
+        `${API_URL}/api/tasks/${taskId}/`,
         {
           method: 'PATCH',
           headers: {
@@ -322,7 +318,7 @@ function App() {
   const deleteTask = async (taskId) => {
     try {
       const response = await authenticatedFetch(
-        `/api/tasks/${taskId}/`,
+        `${API_URL}/api/tasks/${taskId}/`,
         {
           method: 'DELETE',
         }
@@ -368,11 +364,9 @@ function App() {
   if (!loggedIn) {
     return (
       <div className="App login-container">
-
         <h1>My Todo App</h1>
 
         <form onSubmit={login}>
-
           <div className="login-field">
             <label>Username</label>
 
@@ -400,13 +394,11 @@ function App() {
           <button type="submit">
             Login
           </button>
-
         </form>
 
         {error && (
           <p className="error">{error}</p>
         )}
-
       </div>
     );
   }
@@ -417,7 +409,6 @@ function App() {
 
   return (
     <div className="App">
-
       <div className="app-header">
         <h1>My Todo App</h1>
 
@@ -432,8 +423,6 @@ function App() {
       {error && (
         <p className="error">{error}</p>
       )}
-
-      {/* ADD TASK */}
 
       <form
         className="add-task-form"
@@ -460,23 +449,15 @@ function App() {
         Tasks
       </h2>
 
-      {/* TASK LIST */}
-
       {tasks.length === 0 ? (
-
         <p>No tasks found.</p>
-
       ) : (
-
         <div className="task-list">
-
           {tasks.map((task) => (
-
             <div
               className="task-card"
               key={task.id}
             >
-
               <input
                 className="task-checkbox"
                 type="checkbox"
@@ -487,7 +468,6 @@ function App() {
               />
 
               {editingTaskId === task.id ? (
-
                 <>
                   <input
                     className="edit-input"
@@ -502,7 +482,6 @@ function App() {
                   />
 
                   <div className="task-actions">
-
                     <button
                       className="save-button"
                       onClick={() =>
@@ -518,12 +497,9 @@ function App() {
                     >
                       Cancel
                     </button>
-
                   </div>
                 </>
-
               ) : (
-
                 <>
                   <span
                     className={`task-title ${
@@ -536,7 +512,6 @@ function App() {
                   </span>
 
                   <div className="task-actions">
-
                     <button
                       className="edit-button"
                       onClick={() =>
@@ -554,20 +529,13 @@ function App() {
                     >
                       Delete
                     </button>
-
                   </div>
                 </>
-
               )}
-
             </div>
-
           ))}
-
         </div>
-
       )}
-
     </div>
   );
 }
