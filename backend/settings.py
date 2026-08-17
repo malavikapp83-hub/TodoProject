@@ -1,6 +1,5 @@
 import os
 from pathlib import Path
-from datetime import timedelta
 
 import dj_database_url
 
@@ -8,26 +7,15 @@ import dj_database_url
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# ============================================================
-# SECURITY
-# ============================================================
-
 SECRET_KEY = os.environ.get(
-    "DJANGO_SECRET_KEY",
-    "django-insecure-development-only-key"
+    "SECRET_KEY",
+    "django-insecure-development-key"
 )
 
-DEBUG = os.environ.get("DEBUG", "True") == "True"
+DEBUG = os.environ.get("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = [
-    "localhost",
-    "127.0.0.1",
-]
+ALLOWED_HOSTS = ["*"]
 
-
-# ============================================================
-# APPLICATIONS
-# ============================================================
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -39,14 +27,9 @@ INSTALLED_APPS = [
 
     "rest_framework",
     "corsheaders",
-
     "tasks",
 ]
 
-
-# ============================================================
-# MIDDLEWARE
-# ============================================================
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -60,16 +43,8 @@ MIDDLEWARE = [
 ]
 
 
-# ============================================================
-# URLS
-# ============================================================
-
 ROOT_URLCONF = "backend.urls"
 
-
-# ============================================================
-# TEMPLATES
-# ============================================================
 
 TEMPLATES = [
     {
@@ -87,91 +62,46 @@ TEMPLATES = [
 ]
 
 
-# ============================================================
-# WSGI
-# ============================================================
-
 WSGI_APPLICATION = "backend.wsgi.application"
 
 
-# ============================================================
-# DATABASE
-# ============================================================
+DATABASES = {
+    "default": dj_database_url.config(
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+        conn_max_age=600,
+    )
+}
 
-DATABASE_URL = os.environ.get("DATABASE_URL")
-
-if DATABASE_URL:
-    DATABASES = {
-        "default": dj_database_url.parse(
-            DATABASE_URL,
-            conn_max_age=600,
-            conn_health_checks=True,
-        )
-    }
-else:
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
-        }
-    }
-
-
-# ============================================================
-# PASSWORD VALIDATION
-# ============================================================
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        "NAME": (
-            "django.contrib.auth.password_validation."
-            "UserAttributeSimilarityValidator"
-        ),
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        "NAME": (
-            "django.contrib.auth.password_validation."
-            "MinimumLengthValidator"
-        ),
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        "NAME": (
-            "django.contrib.auth.password_validation."
-            "CommonPasswordValidator"
-        ),
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        "NAME": (
-            "django.contrib.auth.password_validation."
-            "NumericPasswordValidator"
-        ),
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 
-
-# ============================================================
-# INTERNATIONALIZATION
-# ============================================================
 
 LANGUAGE_CODE = "en-us"
 
 TIME_ZONE = "UTC"
 
 USE_I18N = True
+
 USE_TZ = True
 
 
-# ============================================================
-# STATIC FILES
-# ============================================================
+STATIC_URL = "/static/"
 
-STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-
-# ============================================================
-# DJANGO REST FRAMEWORK
-# ============================================================
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
@@ -183,25 +113,4 @@ REST_FRAMEWORK = {
 }
 
 
-# ============================================================
-# JWT
-# ============================================================
-
-SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
-}
-
-
-# ============================================================
-# CORS
-# ============================================================
-
 CORS_ALLOW_ALL_ORIGINS = True
-
-
-# ============================================================
-# DEFAULT PRIMARY KEY
-# ============================================================
-
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
