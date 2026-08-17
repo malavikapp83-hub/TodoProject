@@ -1,16 +1,9 @@
-"""
-Django settings for backend project.
-"""
-
 import os
 from pathlib import Path
-
 from datetime import timedelta
 
+import dj_database_url
 
-# ============================================================
-# BASE
-# ============================================================
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -24,7 +17,7 @@ SECRET_KEY = os.environ.get(
     "django-insecure-development-only-key"
 )
 
-DEBUG = os.environ.get("DEBUG", "False") == "True"
+DEBUG = os.environ.get("DEBUG", "True") == "True"
 
 ALLOWED_HOSTS = [
     "localhost",
@@ -44,11 +37,9 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
-    # Third-party
     "rest_framework",
     "corsheaders",
 
-    # Local
     "tasks",
 ]
 
@@ -59,10 +50,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-
-    # CORS
     "corsheaders.middleware.CorsMiddleware",
-
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -113,8 +101,6 @@ WSGI_APPLICATION = "backend.wsgi.application"
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
 if DATABASE_URL:
-    import dj_database_url
-
     DATABASES = {
         "default": dj_database_url.parse(
             DATABASE_URL,
@@ -172,7 +158,6 @@ LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
 
 USE_I18N = True
-
 USE_TZ = True
 
 
@@ -181,7 +166,6 @@ USE_TZ = True
 # ============================================================
 
 STATIC_URL = "static/"
-
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 
